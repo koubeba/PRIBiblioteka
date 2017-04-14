@@ -1,0 +1,29 @@
+DOKUMENTACJA ------------
+1. Program Biblioteka
+2. Pliki nagłówkowe:
+-czytelnik.h
+	Zawiera makrodefinicje:
+	-M_IMIE - maksymalna długość imienia czytelnika
+	-M_NAZWISKO - -,,-
+	-M_CZYTELNIKOW - maksymalna liczba czytelnikow w bazie danych
+	-M_LICZBA_KSIAZEK - maksymalna liczba książek wypożyczonych przez czytelnika
+	
+	Definicję typu CZYTELNIK
+
+	Funkcje związane z obsługą katalogu czytelników:
+	-int dodaj_czytelnika(CZYTELNIK czytelnicy[], int * liczba_czytelnikow, int * m_id);
+	  Zwraca 1, jeśli operacja dodania się powiodła i 0 wpp.
+	  W przypadku powiedzenia się operacji dodaje nowy rekord w tablicy czytelników i zwiększa liczbę czytelników oraz maksymalne id o 1.
+	-int modyfikuj_czytelnika(CZYTELNIK czytelnicy[]);
+	  Zwraca 1, jeśli modyfikacja się powiodła i 0 wpp.
+	-int usun_czytelnika(CZYTELNIK czytelnicy[], int * liczba_czytelnikow);
+	  Zwraca 1, jeśli usuwanie się powiodło i 0 wpp.
+	  Zamienia usuwany rekord z ostatnim, po czym zmniejsza liczbę czytelników o 1.
+
+-obsluga.h //Plik zawierajacy definicje funkcji pomocniczych.
+	Funkcje:
+	-int wczytaj(char slowo[], int maks_rozmiar);
+	  Wczytuje slowo z wejscia standardowego do tablicy slowo. 
+	  Jezeli podano wiecej znakow niz maks_rozmiar, funkcja ignoruje pozostale i usuwa je z buforu wejscia standardowego.
+	int znajdz_czytelnika_po_id(CZYTELNIK czytelnicy[], int liczba_czytelnikow, int id);
+	  Iteruje po tablicy czytelnikow. Jezeli id danego rekordu jest rowne id przekazanemu funkcji, zatrzymuje sie i zwraca element, pod ktorym jest w tablicy szukany czytelnik. 
