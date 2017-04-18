@@ -1,29 +1,176 @@
 DOKUMENTACJA ------------
 1. Program Biblioteka
-2. Pliki nagłówkowe:
--czytelnik.h
-	Zawiera makrodefinicje:
-	-M_IMIE - maksymalna długość imienia czytelnika
-	-M_NAZWISKO - -,,-
-	-M_CZYTELNIKOW - maksymalna liczba czytelnikow w bazie danych
-	-M_LICZBA_KSIAZEK - maksymalna liczba książek wypożyczonych przez czytelnika
-	
-	Definicję typu CZYTELNIK
+	Program przechowuje dane o książkach i czytelnikach w bibliotece.
+	Umożliwia:
+	-dodawanie nowych książek, czytelników oraz katalogów książek
+	-kasowania książek, czytelników oraz katalogów książek
+	-modyfikację danych książek, czytelników oraz katalogów książek
+	-wyświetlanie listy czytelników oraz książek
+	-sortowanie listy czytelników oraz książek względem zadanych parametrów: po imieniu oraz nazwisku w przypadku czytelników oraz tytułu, autora, roku wydania i liczby stron w przypadku książek
+	-wyjście z programu
 
-	Funkcje związane z obsługą katalogu czytelników:
-	-int dodaj_czytelnika(CZYTELNIK czytelnicy[], int * liczba_czytelnikow, int * m_id);
-	  Zwraca 1, jeśli operacja dodania się powiodła i 0 wpp.
-	  W przypadku powiedzenia się operacji dodaje nowy rekord w tablicy czytelników i zwiększa liczbę czytelników oraz maksymalne id o 1.
-	-int modyfikuj_czytelnika(CZYTELNIK czytelnicy[], int liczba_czytelnikow);
-	  Zwraca 1, jeśli modyfikacja się powiodła i 0 wpp.
-	-int usun_czytelnika(CZYTELNIK czytelnicy[], int * liczba_czytelnikow);
-	  Zwraca 1, jeśli usuwanie się powiodło i 0 wpp.
-	  Zamienia usuwany rekord z ostatnim, po czym zmniejsza liczbę czytelników o 1.
+	Ponadto program kontroluje wprowadzane dane.
 
--obsluga.h //Plik zawierajacy definicje funkcji pomocniczych.
-	Funkcje:
-	-int wczytaj(char slowo[], int maks_rozmiar);
-	  Wczytuje slowo z wejscia standardowego do tablicy slowo. 
-	  Jezeli podano wiecej znakow niz maks_rozmiar, funkcja ignoruje pozostale i usuwa je z buforu wejscia standardowego.
+2. Sposób przechowywania danych
+	W programie zdefiniowane są 3 struktury:
+	-CZYTELNIK zawierająca pola: imie, nazwisko, id, liczba wypozyczonych ksiazek, tablica zawierajaca id wypozyczonych ksiazek.
+	-KSIAZKA zawierająca pola: tytuł, autor, liczba stron, rok wydania, id, liczba wypożyczających dana książkę czytelników, tablica zawierająca id wypożyczających.
+	-KATALOG zawierająca pola: nazwa, id, ilość ksiązek w katalogu, tablica id książek w katalogu.
+
+	Dane przechowywane są w tablicach struktur o stałym rozmiarze.
+
+3. Funkcje
+	-Funkcje czytelnika:
+
+	int dodaj_czytelnika(CZYTELNIK czytelnicy[], int * liczba_czytelnikow, int * m_id)
+		Funkcja dodająca czytelnika do tablicy struktur czytelnicy. Sprawdza, czy w bazie nie ma już maksymalnej liczby czytelników. W takim przypadku zwraca 0.
+		Jeśli nie, pobiera od użytkownika imię i nazwisko (kontrolując poprawność danych). Przydziela nowemu rekordowi wartość maksymalnego indeksu.
+		Po pomyślnym pobraniu danych zwiększa liczbę czytelników oraz maksymalny indeks o 1 oraz zwraca 1.
+
+	int modyfikuj_czytelnika(CZYTELNIK czytelnicy[], int liczba_czytelnikow);
+		Funkcja modyfikująca dane czytelnika w tablicy struktur. Sprawdza, czy w bazie jest chociaż jeden czytelnik. Jeśli nie ma, zwraca 0.
+		W przeciwnym przypadku pobiera od użytkownika id, sprawdza poprawność i znajduje indeks, pod którym czytelnik o danym id jest zapisany w tablicy.
+		Po pomyślnym pobraniu nowych danych od użytkownika zwraca 1.
+
+	int usun_czytelnika(CZYTELNIK czytelnicy[], KSIAZKA ksiazki[], int * liczba_czytelnikow);
+		Funkcja usuwająca czytelnika oraz usuwająca jego id z rekordów książek, które miał wypożyczone.
+		Rozpoczyna od sprawdzenia, czy w bazie jest chociaż jeden czytelnik. Jeśli nie, zwraca 0.
+		W przeciwnym przypadku pobiera id, sprawdza poprawność i znajduje indeks, pod którym czytelnik o danym id jest zapisany w tablicy.
+		Zamienia rekord danego czytelnika z rekordem znajdującym się pod ostatnim zapisanym indeksem w tablicy oraz zmniejsza liczbe czytelnikow o 1. Po pomyslnej zamianie zwraca 1.
+
 	int znajdz_czytelnika_po_id(CZYTELNIK czytelnicy[], int liczba_czytelnikow, int id);
-	  Iteruje po tablicy czytelnikow. Jezeli id danego rekordu jest rowne id przekazanemu funkcji, zatrzymuje sie i zwraca element, pod ktorym jest w tablicy szukany czytelnik. 
+		Funkcja znajduje indeks, pod ktorym czytelnik o danym ID znajduje sie w tablicy.
+
+	void wyswietl_ksiazki_czytelnika(CZYTELNIK czytelnicy[], KSIAZKA ksiazki[], int liczba_czytelnikow, int liczba_ksiazek);
+		Funkcja sprawdza, czy w bazie jest chociaz jeden czytelnik. Jesli nie, wyswietla odpowiedni komunikat.
+		Jesli tak, pobiera id od uzytkownika, sprawdza jego poprawność, i znajduje indeks, pod którym czytelnik o danym ID jest zapisany w tablicy.
+		Następnie wyświetla wszystkie książki wypożyczone przez danego czytelnika.
+
+	-Funkcje książek:
+
+	int dodaj_ksiazke(KSIAZKA ksiazki[], int * liczba_ksiazek, int * m_id)
+		Funkcja dodająca ksiazke do tablicy struktur ksiazki. Sprawdza, czy w bazie nie ma już maksymalnej liczby ksiazek. W takim przypadku zwraca 0.
+		Jeśli nie, pobiera od użytkownika tytuł, autora, liczbe stron i rok wydania (kontrolując poprawność danych). Przydziela nowemu rekordowi wartość maksymalnego indeksu.
+		Po pomyślnym pobraniu danych zwiększa liczbę książek oraz maksymalny indeks o 1 oraz zwraca 1.
+
+	int modyfikuj_ksiazke(KSIAZKA ksiazki[], int liczba_ksiazek)
+		Funkcja modyfikująca dane książki w tablicy struktur. Sprawdza, czy w bazie jest chociaż jedna książka. Jeśli nie ma, zwraca 0.
+		W przeciwnym przypadku pobiera od użytkownika id, sprawdza poprawność i znajduje indeks, pod którym książka o danym id jest zapisana w tablicy.
+		Po pomyślnym pobraniu nowych danych od użytkownika zwraca 1.
+
+	int usun_ksiazke(KSIAZKA ksiazki[], CZYTELNIK czytelnicy[], KATALOG katalogi[], int * liczba_ksiazek, int liczba_katalogow, int liczba_czytelnikow)
+		Funkcja usuwająca książkę. Usuwa id książki z rekordów czytelników, którzy ją wypożyczyli, oraz z rekordów katalogów, w których się znajdowała.
+		Rozpoczyna od sprawdzenia, czy w bazie jest chociaż jedna książka. Jeśli nie, zwraca 0.
+		W przeciwnym przypadku pobiera id, sprawdza poprawność i znajduje indeks, pod którym książka o danym id jest zapisana w tablicy.
+		Zamienia rekord danej książki z rekordem znajdującym się pod ostatnim zapisanym indeksem w tablicy oraz zmniejsza liczbe książek o 1. Po pomyslnej zamianie zwraca 1.
+
+	int znajdz_ksiazke_po_id(KSIAZKA ksiazki[], int liczba_ksiazek, int id)
+		Funkcja znajdująca indeks pod którym zapisana jest książka o danym id w tablicy.
+
+	void usun_z_katalogow(KATALOG katalogi[], int liczba_katalogow, int id)
+		Funkcja iteruje przez tablicę katalogów i usuwa z każdego rekordu katalogu dane id.
+
+	int wypozycz_ksiazke(CZYTELNIK czytelnicy[], KSIAZKA ksiazki[], int liczba_czytelnikow, int liczba_ksiazek); //Zwraca 0 jesli uzytkownik ma za duza liczbe wypozyczen, -1 jesli ksiazke wypozyczylo zbyt wiele uzytkownikow
+		Funkcja rozpoczyna od sprawdzenia, czy w bazie jest przynajmniej jedna ksiazka i jeden czytelnik. Jesli nie ma, zwraca -2.
+		W przeciwnym przypadku wczytuje ID czytelnika, sprawdza jego poprawnosc, oraz znajduje indeks, pod ktorym jest zapisany czytelnik o danym ID.
+		Jezeli czytelnik ma juz wypozyczona maksymalna liczbe ksiazek, zwraca 0.
+		W przeciwnym przypadku wczytuje ID ksiazki, sprawdza jego poprawnosc, oraz znajduje indeks, pod ktorym jest zapisana ksiazka o danym ID.
+		Jezeli czytelnik wypozyczyl juz te dana ksiazke, zwraca -3.
+		W przeciwnym przypadku dopisuje do rekordu czytelnikow id ksiazki oraz id czytelnika do rekordu ksiazki i zwraca 1.
+
+	-Funkcje katalogów:
+
+	int dodaj_katalog(KATALOG katalogi[], int* liczba_katalogow, int* m_id)
+		Funkcja dodaje nowy rekord do tablicy katalogów.
+		Rozpoczyna od sprawdzenia, czy w bazie nie ma już maksymalnej liczby katalogów. W takim przypadku zwraca 0.
+		Jeśli nie, pobiera od użytkownika nazwę i po pomyślnym jej zapisaniu zwiększa liczbę katalogów oraz maksymalne ID o 1 i zwraca 1.
+
+	int modyfikuj_katalog(KATALOG katalogi[], int katalogi_rozmiar)
+		Funkcja zmieniająca nazwę danego katalogu.
+		Rozpoczyna od sprawdzenia, czy w bazie jest chociaż jeden katalog. Jeśli nie ma, zwraca 0.
+		W przeciwnym wypadku pobiera od użytkownika ID katalogu, sprawdza poprawność, oraz pobiera nową nazwę katalogu.
+		Po pomyślnym zapisaniu nowych danych zwraca 1.
+
+	int usun_katalog(KATALOG katalogi[], int * liczba_katalogow)
+		Funkcja usuwająca katalog o danym ID.
+		Funkcja rozpoczyna od sprawdzenia, czy w bazie jest chociaż jeden katalog. Jeśli nie, zwraca 0.
+		W przeciwnym przypadku pobiera od użytkownika ID, sprawdza jego poprawność, znajduje indeks, pod którym katalog o danym ID jest zapisany w tablicy.
+		Zamienia rekord o danym indeksie z rekordem o ostatnim zapisanym indeksie, po czym zmniejsza liczbe katalogow o 1.
+
+	int znajdz_katalog_po_id(KATALOG katalogi[], int liczba_katalogow, int id);
+		Znajduje indeks, pod którym zapisany jest katalog o danym ID w tablicy.
+
+	void wyswietl_katalogi_skrot(KATALOG katalogi[], int liczba_katalogow)
+		Wyświetla listę wszystkich katalogów w bazie: ich ID, nazwę, oraz liczbę książek.
+
+	int dodaj_do_katalogu(KATALOG katalogi[], KSIAZKA ksiazki[], int liczba_katalogow, int liczba_ksiazek)
+		Funkcja rozpoczyna od sprawdzenia, czy w bazie jest przynajmniej jeden katalog i jedna książka. Jeśli tak nie jest, zwraca 0.
+		W przeciwnym wypadku pobiera od użytkownika ID katalogu, sprawdza jego poprawność, oraz znajduje indeks, pod którym jest zapisany katalog o danym ID.
+		Jeżeli w katalogu jest już maksymalna liczba książek, funkcja konczy działanie i zwraca -2.
+		W przeciwnym wypadku pobiera od użytkownika ID książki, sprawdza jego poprawność, oraz znajduje indeks, pod którym książka o danym ID jest zapisana.
+		Dodaje do rekordu katalogu id książki, zwiększa liczbę ksiązek w katalogu o 1 i zwraca 1.
+
+	-Funkcje sortujące:
+
+	void sortuj_ksiazki(KSIAZKA books[], int liczba_ksiazek)
+		Funkcja sortuje rekordy ksiazek po:
+		a) tytule
+		b) autorze
+		c) liczbie stron
+		d) roku wydania
+		Po pobraniu od uzytkownika odpowiedniego znaku sortuje pod wzgledem zadanego parametru.
+
+	void sortuj_czytelnikow(CZYTELNIK czytelnicy[], int liczba_czytelnikow)
+		Funkcja sortuje rekordy czytelnikow po:
+		a) imieniu
+		b) nazwisku
+		Po pobraniu od uzytkownika odpowiedniego znaku sortuje pod wzgledem zadanego parametru.
+
+	-Funkcje pomocnicze:
+	int wczytaj(char slowo[], int maks_rozmiar);
+		Funkcja pobiera od czytelnika kolejne znaki i zapisuje je w tablicy slowo.
+		Po przekroczeniu maksymalnej ilosci znakow (maks_rozmiar) ignoruje wszystkie kolejne wprowadzone.
+		Na ostatnie miejsce wpisuje '\0' oraz zwraca dlugosc wczytanego slowa.
+
+	void usun_z_tablicy(int tablica[], int* ilosc_elementow, int element);
+		Funkcja iteruje po przekazanej tablicy i usuwa wartość równą podanemu elementowi.
+		Zmniejsza ilosc elementow o 1. (Zalozenie: elementy w tablicy sie nie powtarzaja!)
+
+	int czy_jest_w(int tablica[], int rozmiar, int element);
+		Funkcja iteruje po tablicy i sprawdza, czy znajduje się w niej wartość równa podanemu elementowi.
+		Jeśli tak, zwraca 1. W przeciwnym przypadku zwraca 0.
+
+	void wczytaj_liczbe(int * id, int min, int max);
+		Funkcja wczytuje liczbę i zapisuje pod przekazanym adresem.
+		Sprawdza, czy wartość jest odpowiedniego typu oraz czy mieści się w podanym zakresie. (min<=liczba<max)
+
+	void wczytaj_ID_czytelnika (CZYTELNIK czytelnicy[], int * id, int liczba_czytelnikow);
+		Funkcja wczytuje liczbę i zapisuje pod przekazanym adresem.
+		Sprawdza, czy wartość jest odpowiedniego typu a następnie szuka indeksu, pod którym zapisany jest czytelnik o danym id.
+		Jeśli indeks nie został znaleziony, oznacza to, że id zostało źle podane i pobiera od użytkownika nową wartość.
+
+	void wczytaj_ID_ksiazki (KSIAZKA ksiazki[], int * id, int liczba_ksiazek);
+		Funkcja wczytuje liczbę i zapisuje pod przekazanym adresem.
+		Sprawdza, czy wartość jest odpowiedniego typu a następnie szuka indeksu, pod którym zapisana jest książka o danym id.
+		Jeśli indeks nie został znaleziony, oznacza to, że id zostało źle podane i pobiera od użytkownika nową wartość.
+
+	void show_instruction();
+		Pokazuje menu startowe.
+
+	-Funkcje porównujące:
+		int porownaj_tytuly (const void  *ksiazka1, const void  *ksiazka2);
+		int porownaj_lata (const void  *ksiazka1, const void  *ksiazka2);
+		int porownaj_strony (const void  *ksiazka1, const void  *ksiazka2);
+		int porownaj_autorow (const void  *ksiazka1, const void  *ksiazka2);
+
+		int porownaj_imiona (const void  *czytelnik1, const void  *czytelnik2);
+		int porownaj_nazwiska (const void  *czytelnik1, const void  *czytelnik2);
+
+	-Funkcje wyświetlające:
+		void wyswietl_czytelnicy(CZYTELNIK czytelnicy[], int liczba_czytelnikow);
+		void wyswietl_czytelnicy_skrot(CZYTELNIK czytelnicy[], int liczba_czytelnikow);
+		void wyswietl_ksiazki(KSIAZKA ksiazki[], CZYTELNIK czytelnicy[], int liczba_ksiazek);
+		void wyswietl_ksiazki_skrot(KSIAZKA ksiazki[], int liczba_ksiazek);
+		void wyswietl_katalogi(KATALOG katalogi[], int liczba_katalogow);
+
+		void wyswietl_ksiazki_w_katalogu(KATALOG katalogi[], KSIAZKA ksiazki[], int liczba_katalogow, int liczba_ksiazek);
